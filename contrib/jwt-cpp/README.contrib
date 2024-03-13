@@ -1,0 +1,5 @@
+Source: https://github.com/Thalhammer/jwt-cpp
+Revision: v0.7.0
+Commit: 08bcf77a687fb06e34138e9e9fa12a4ecbe12332
+
+This library is used for TDEI Workspaces JWT token authentication.

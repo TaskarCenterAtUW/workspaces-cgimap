@@ -888,6 +888,25 @@ std::optional< osm_user_id_t > readonly_pgsql_selection::get_user_id_for_oauth2_
   }
 }
 
+std::optional<osm_user_id_t> readonly_pgsql_selection::get_user_id_for_tdei_token(
+    const std::string& auth_uid // JWT subject
+) {
+  m.prepare("get_user_id_for_tdei_token",
+    R"(SELECT id as user_id FROM users
+        WHERE auth_provider = 'TDEI'
+          AND auth_uid = $1
+        LIMIT 1
+    )");
+
+  auto res = m.exec_prepared("get_user_id_for_tdei_token", auth_uid);
+
+  if (!res.empty()) {
+    return res[0]["user_id"].as<osm_user_id_t>();
+  }
+
+  return {};
+}
+
 bool readonly_pgsql_selection::is_user_active(const osm_user_id_t id)
 {
   m.prepare("is_user_active",

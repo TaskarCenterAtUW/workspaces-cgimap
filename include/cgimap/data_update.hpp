@@ -62,6 +62,12 @@ public:
   // get the current maximum bounding box size for a given user id
   virtual uint64_t get_bbox_size_limit(osm_user_id_t uid) = 0;
 
+  // TDEI auth integration
+  virtual osm_user_id_t provision_tdei_user(
+    const std::string& subject,
+    const std::string& email,
+    const std::string& display_name) = 0;
+
   /**
    * factory for the creation of data updates. this abstracts away
    * the creation process of transactions, and allows some up-front

@@ -130,6 +130,9 @@ if(BUILD_TESTING AND NOT USE_BUNDLED_CATCH2)
     find_package(Catch2 3 REQUIRED)
 endif()
 
+# TDEI Workspaces - we need to link an OpenSSL implementation for JWT-CPP:
+find_package(OpenSSL REQUIRED)
+
 ###########################
 # source subdirectories
 ###########################
@@ -154,7 +157,8 @@ target_link_libraries(openstreetmap_cgimap
     cgimap_fcgi
     cgimap_apidb
     Boost::program_options
-    PQXX::PQXX)
+    PQXX::PQXX
+    OpenSSL::SSL)
 
 
 #############################################################

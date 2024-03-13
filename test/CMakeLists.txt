@@ -37,7 +37,8 @@ if(BUILD_TESTING)
         cgimap_common_compiler_options
         cgimap_core
         Boost::program_options
-        Catch2::Catch2WithMain)
+        Catch2::Catch2WithMain
+        OpenSSL::SSL)
 
     add_test(NAME test_core_check
         COMMAND test_core_check)
@@ -207,7 +208,8 @@ if(BUILD_TESTING)
         cgimap_core
         cgimap_apidb
         Boost::program_options
-        Catch2::Catch2)
+        Catch2::Catch2
+        OpenSSL::SSL)
 
     add_test_with_virtualenv(test_apidb_backend_oauth2)
 
@@ -262,7 +264,8 @@ if(BUILD_TESTING)
         cgimap_core
         cgimap_apidb
         Boost::program_options
-        Catch2::Catch2)
+        Catch2::Catch2
+        OpenSSL::SSL)
 
     add_test_with_virtualenv(test_apidb_backend_changesets)
 
@@ -281,7 +284,8 @@ if(BUILD_TESTING)
         cgimap_core
         cgimap_apidb
         Boost::program_options
-        Catch2::Catch2)
+        Catch2::Catch2
+        OpenSSL::SSL)
 
     add_test_with_virtualenv(test_apidb_backend_changeset_downloads)
 
@@ -301,7 +305,8 @@ if(BUILD_TESTING)
         cgimap_apidb
         Boost::program_options
         Threads::Threads
-        Catch2::Catch2)
+        Catch2::Catch2
+        OpenSSL::SSL)
 
     add_test_with_virtualenv(test_apidb_backend_changeset_uploads)
 
@@ -321,7 +326,8 @@ if(BUILD_TESTING)
         cgimap_apidb
         Boost::program_options
         Threads::Threads
-        Catch2::Catch2)
+        Catch2::Catch2
+        OpenSSL::SSL)
 
     add_test_with_virtualenv(test_apidb_backend_disable_write)
 
@@ -343,7 +349,8 @@ if(BUILD_TESTING)
         cgimap_apidb
         Catch2::Catch2
         Boost::program_options
-        PQXX::PQXX)
+        PQXX::PQXX
+        OpenSSL::SSL)
 
     file(GLOB test_apidb_backend_core_dirs LIST_DIRECTORIES true "${CMAKE_CURRENT_SOURCE_DIR}/*.testcore")
     foreach (test ${test_apidb_backend_core_dirs})

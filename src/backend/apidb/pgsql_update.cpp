@@ -138,6 +138,58 @@ uint64_t pgsql_update::get_bbox_size_limit(osm_user_id_t uid)
   }
 }
 
+osm_user_id_t pgsql_update::provision_tdei_user(
+  const std::string& subject,
+  const std::string& email,
+  const std::string& display_name
+) {
+  m.prepare (
+    "provision_tdei_user",
+    R"(
+     INSERT INTO users (
+                 email,
+                 display_name,
+                 auth_uid,
+                 auth_provider,
+                 status,
+                 pass_crypt,
+                 data_public,
+                 email_valid,
+                 terms_seen,
+                 creation_time,
+                 terms_agreed,
+                 tou_agreed)
+          VALUES (
+                 $1,
+                 $2,
+                 $3,
+                 'TDEI',
+                 'active',
+                 'none',
+                 true,
+                 true,
+                 true,
+                 (now() at time zone 'utc'),
+                 (now() at time zone 'utc'),
+                 (now() at time zone 'utc'))
+          RETURNING id
+    )"
+  );
+
+  auto r = m.exec_prepared("provision_tdei_user", email, display_name, subject);
+
+  if (r.affected_rows() != 1) {
+    throw http::server_error("Failed to provision TDEI user");
+  }
+
+  return r[0]["id"].as<osm_user_id_t>();
+}
+
+void pgsql_update::set_tdei_workspace(const workspace_id_t id)
+{
+  m.exec(fmt::format(R"(SET search_path TO "workspace-{:d}", public)", id));
+}
+
 
 pgsql_update::factory::factory(const po::variables_map &opts)
   : m_connection(connect_db_str(opts)),

@@ -67,6 +67,8 @@ target_sources(cgimap_core PRIVATE
     api06/changeset_upload/osmchange_tracking.cpp
     json_formatter.cpp
     json_writer.cpp
+
+    workspaces/tdei_auth.cpp
 )
 
 target_link_libraries(cgimap_core
@@ -79,7 +81,8 @@ target_link_libraries(cgimap_core
     $<$<BOOL:${ENABLE_BROTLI}>:Brotli::encoder>
     $<$<BOOL:${ENABLE_BROTLI}>:Brotli::decoder>
     YAJL::YAJL
-    PQXX::PQXX)
+    PQXX::PQXX
+    jwt-cpp)
 
 #############
 # cgimap_fcgi

@@ -17,6 +17,7 @@
 #include "cgimap/output_writer.hpp"
 #include "cgimap/util.hpp"
 #include "cgimap/oauth2.hpp"
+#include "cgimap/workspaces/tdei_auth.hpp"
 
 #include <chrono>
 #include <memory>
@@ -398,12 +399,20 @@ bool show_redactions_requested(const request &req) {
 
 
 // Determine user id and allow_api_write flag based on OAuth header
-std::pair<std::optional<osm_user_id_t>, bool> determine_user_id(const request& req, data_selection& selection)
+std::pair<std::optional<osm_user_id_t>, bool> determine_user_id(
+  const request& req,
+  data_selection& selection,
+  data_update::factory& update_factory)
 {
   bool allow_api_write = true;
 
+  // Try to authenticate user via TDEI JWT token
+  auto user_id = workspaces::authenticate_user(req, selection, update_factory);
+
   // Try to authenticate user via OAuth2 Bearer Token
-  auto user_id = oauth2::validate_bearer_token(req, selection, allow_api_write);
+  if (!user_id) {
+    user_id = oauth2::validate_bearer_token(req, selection, allow_api_write);
+  }
 
   return {user_id, allow_api_write};
 }
@@ -451,7 +460,7 @@ void process_request(request &req, rate_limiter &limiter,
     // create a data selection for the request
     auto selection = factory.make_selection(*default_transaction);
 
-    const auto [user_id, allow_api_write] = determine_user_id(req, *selection);
+    const auto [user_id, allow_api_write] = determine_user_id(req, *selection, *update_factory);
 
     // Initially assume IP based client key
     std::string client_key = addr_prefix + ip;

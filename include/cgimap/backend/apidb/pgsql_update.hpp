@@ -47,6 +47,12 @@ public:
 
   uint64_t get_bbox_size_limit(osm_user_id_t uid) override;
 
+  // TDEI auth integration
+  osm_user_id_t provision_tdei_user(
+    const std::string& subject,
+    const std::string& email,
+    const std::string& display_name) override;
+
   /**
    * abstracts the creation of transactions for the
    * data updates.

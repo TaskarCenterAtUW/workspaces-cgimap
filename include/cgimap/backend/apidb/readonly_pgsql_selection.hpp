@@ -79,6 +79,7 @@ public:
   std::optional< osm_user_id_t > get_user_id_for_oauth2_token(
       const std::string &token_id, bool &expired, bool &revoked,
       bool &allow_api_write) override;
+  std::optional<osm_user_id_t> get_user_id_for_tdei_token(const std::string& email) override;
   bool is_user_active(const osm_user_id_t id) override;
 
 

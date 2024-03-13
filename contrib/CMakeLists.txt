@@ -13,6 +13,8 @@ target_link_libraries(cgimap_libxml++ PUBLIC cgimap_common_compiler_options)
 
 add_subdirectory(sjparser EXCLUDE_FROM_ALL)
 
+add_subdirectory(jwt-cpp)
+target_link_libraries(jwt-cpp INTERFACE cgimap_common_compiler_options)
 
 # Propagate cmake module path changes from subprojects to parent
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" PARENT_SCOPE)

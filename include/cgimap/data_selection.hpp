@@ -178,6 +178,9 @@ public:
       const std::string &token_id, bool &expired, bool &revoked,
       bool &allow_api_write) = 0;
 
+  // Authentication using TDEI access token for TDEI Workspaces..
+  virtual std::optional<osm_user_id_t> get_user_id_for_tdei_token(const std::string& email) = 0;
+
   // is user status confirmed or active?
   virtual bool is_user_active(const osm_user_id_t) = 0;
 
