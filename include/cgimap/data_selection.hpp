@@ -12,6 +12,7 @@
 
 #include "cgimap/types.hpp"
 #include "cgimap/output_formatter.hpp"
+#include "cgimap/workspaces/types.hpp"
 
 #include <chrono>
 #include <memory>
@@ -180,6 +181,9 @@ public:
 
   // Authentication using TDEI access token for TDEI Workspaces..
   virtual std::optional<osm_user_id_t> get_user_id_for_tdei_token(const std::string& email) = 0;
+
+  // TDEI Workspace tenant selection
+  virtual void set_tdei_workspace(const workspace_id_t id) = 0;
 
   // is user status confirmed or active?
   virtual bool is_user_active(const osm_user_id_t) = 0;

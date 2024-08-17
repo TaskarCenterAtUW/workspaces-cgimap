@@ -80,6 +80,7 @@ public:
       const std::string &token_id, bool &expired, bool &revoked,
       bool &allow_api_write) override;
   std::optional<osm_user_id_t> get_user_id_for_tdei_token(const std::string& email) override;
+  void set_tdei_workspace(const workspace_id_t id) override;
   bool is_user_active(const osm_user_id_t id) override;
 
 

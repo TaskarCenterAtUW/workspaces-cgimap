@@ -907,6 +907,11 @@ std::optional<osm_user_id_t> readonly_pgsql_selection::get_user_id_for_tdei_toke
   return {};
 }
 
+void readonly_pgsql_selection::set_tdei_workspace(const workspace_id_t id)
+{
+  m.exec(fmt::format(R"(SET search_path TO "workspace-{:d}", public)", id));
+}
+
 bool readonly_pgsql_selection::is_user_active(const osm_user_id_t id)
 {
   m.prepare("is_user_active",

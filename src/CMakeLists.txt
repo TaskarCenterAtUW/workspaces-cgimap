@@ -69,6 +69,7 @@ target_sources(cgimap_core PRIVATE
     json_writer.cpp
 
     workspaces/tdei_auth.cpp
+    workspaces/tenant.cpp
 )
 
 target_link_libraries(cgimap_core

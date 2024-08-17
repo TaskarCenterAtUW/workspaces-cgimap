@@ -83,6 +83,7 @@ public:
       const std::string &token_id, bool &expired, bool &revoked,
       bool &allow_api_write) override { return {}; }
   std::optional<osm_user_id_t> get_user_id_for_tdei_token(const std::string& email) override { return {}; }
+  void set_tdei_workspace(const workspace_id_t id) override {}
   bool is_user_active(const osm_user_id_t id) override { return false; }
 
   int select_historical_nodes(const std::vector<osm_edition_t> &) override { return 0; }

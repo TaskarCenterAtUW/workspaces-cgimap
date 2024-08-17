@@ -53,6 +53,9 @@ public:
     const std::string& email,
     const std::string& display_name) override;
 
+  // TDEI Workspace tenant selection
+  void set_tdei_workspace(const workspace_id_t id) override;
+
   /**
    * abstracts the creation of transactions for the
    * data updates.

@@ -18,6 +18,7 @@
 #include "cgimap/util.hpp"
 #include "cgimap/oauth2.hpp"
 #include "cgimap/workspaces/tdei_auth.hpp"
+#include "cgimap/workspaces/tenant.hpp"
 
 #include <chrono>
 #include <memory>
@@ -231,6 +232,10 @@ std::tuple<std::string, size_t>
 process_get_request(request& req, const handler& handler,
                     data_selection& selection,
                     const std::string &ip, const std::string &generator) {
+  if (const auto workspace_id = workspaces::try_id_from_request(req)) {
+    selection.set_tdei_workspace(*workspace_id);
+  }
+
   // request start logging
   const std::string request_name = handler.log_name();
   logger::message(fmt::format("Started request for {} from {}", request_name, ip));
@@ -263,6 +268,7 @@ process_post_put_request(RequestContext& req_ctx,
 
   try {
     const auto & pe_handler = dynamic_cast< const payload_enabled_handler& >(handler);
+    const auto workspace_id = workspaces::try_id_from_request(req_ctx.req);
 
     // Process request, perform database update
     {
@@ -270,6 +276,10 @@ process_post_put_request(RequestContext& req_ctx,
       auto rw_transaction = update_factory.get_default_transaction();
       auto data_update = update_factory.make_data_update(*rw_transaction);
       check_db_readonly_mode(*data_update);
+
+      if (workspace_id) {
+        data_update->set_tdei_workspace(*workspace_id);
+      }
 
       // Executing the responder constructor parses the payload, performs db CRUD operations
       // and eventually calls db commit(), in case there are no issues with the data.
@@ -296,6 +306,11 @@ process_post_put_request(RequestContext& req_ctx,
 
     // create a data selection for the request
     auto data_selection = factory.make_selection(*read_only_transaction);
+
+    if (workspace_id) {
+      data_selection->set_tdei_workspace(*workspace_id);
+    }
+
     auto sel_responder = pe_handler.responder(*data_selection);
     bytes_written = generate_response(req_ctx.req, *sel_responder, generator);
 
