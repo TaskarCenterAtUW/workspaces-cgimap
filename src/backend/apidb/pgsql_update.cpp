@@ -57,12 +57,19 @@ std::string connect_db_str(const po::variables_map &options) {
 
 } // anonymous namespace
 
-pgsql_update::pgsql_update(Transaction_Owner_Base& to, bool readonly)
+pgsql_update::pgsql_update(
+  Transaction_Owner_Base& to,
+  std::optional<workspace_id_t> workspace_id,
+  bool readonly)
     : m{ to },
       m_readonly{ readonly } {
 
   if (is_api_write_disabled())
     return;
+
+  if (workspace_id) {
+    set_tdei_workspace(*workspace_id);
+  }
 
   m.exec(R"(CREATE TEMPORARY TABLE tmp_create_nodes
       (
@@ -251,8 +258,11 @@ pgsql_update::factory::factory(const po::variables_map &opts)
 }
 
 std::unique_ptr<data_update>
-pgsql_update::factory::make_data_update(Transaction_Owner_Base& to) {
-  return std::make_unique<pgsql_update>(to, m_api_write_disabled);
+pgsql_update::factory::make_data_update(
+  Transaction_Owner_Base& to,
+  std::optional<workspace_id_t> workspace_id)
+{
+  return std::make_unique<pgsql_update>(to, workspace_id, m_api_write_disabled);
 }
 
 std::unique_ptr<Transaction_Owner_Base>

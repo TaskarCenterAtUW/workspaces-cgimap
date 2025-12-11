@@ -276,12 +276,8 @@ process_post_put_request(RequestContext& req_ctx,
     {
       const auto payload = req_ctx.req.get_payload();
       auto rw_transaction = update_factory.get_default_transaction();
-      auto data_update = update_factory.make_data_update(*rw_transaction);
+      auto data_update = update_factory.make_data_update(*rw_transaction, workspace_id);
       check_db_readonly_mode(*data_update);
-
-      if (workspace_id) {
-        data_update->set_tdei_workspace(*workspace_id);
-      }
 
       // Executing the responder constructor parses the payload, performs db CRUD operations
       // and eventually calls db commit(), in case there are no issues with the data.

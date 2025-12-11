@@ -23,7 +23,10 @@ struct RequestContext;
 class pgsql_update : public data_update {
 
 public:
-  pgsql_update(Transaction_Owner_Base& to, bool is_readonly);
+  pgsql_update(
+    Transaction_Owner_Base& to,
+    std::optional<workspace_id_t> workspace_id,
+    bool is_readonly);
 
   ~pgsql_update() override = default;
 
@@ -64,7 +67,9 @@ public:
   public:
     factory(const boost::program_options::variables_map &);
     ~factory() override = default;
-    std::unique_ptr<data_update> make_data_update(Transaction_Owner_Base& to) override;
+    std::unique_ptr<data_update> make_data_update(
+      Transaction_Owner_Base& to,
+      std::optional<workspace_id_t> workspace_id = std::nullopt) override;
     std::unique_ptr<Transaction_Owner_Base> get_default_transaction() override;
     std::unique_ptr<Transaction_Owner_Base> get_read_only_transaction() override;
 
