@@ -71,11 +71,16 @@ TEST_CASE("Invalid max-changeset-elements", "[options]") {
   REQUIRE_THROWS_AS(check_options(vm), std::invalid_argument);
 }
 
-TEST_CASE("max-changeset-elements too large", "[options]") {
-  po::variables_map vm;
-  vm.emplace("max-changeset-elements", po::variable_value(50001, false));
-  REQUIRE_THROWS_AS(check_options(vm), std::invalid_argument);
-}
+// TDEI Workspaces: allow large dataset imports
+//
+// TODO: importing via changeset is pretty slow. Create dedicated workspace
+// initialization functionality.
+//
+//TEST_CASE("max-changeset-elements too large", "[options]") {
+//  po::variables_map vm;
+//  vm.emplace("max-changeset-elements", po::variable_value(50001, false));
+//  REQUIRE_THROWS_AS(check_options(vm), std::invalid_argument);
+//}
 
 TEST_CASE("Invalid scale", "[options]") {
   po::variables_map vm;
