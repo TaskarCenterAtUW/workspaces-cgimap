@@ -52,7 +52,7 @@ static std::atomic<bool> reload_requested = false;
 static_assert(std::atomic<bool>::is_always_lock_free);
 
 constexpr auto MIN_CHILD_RUNTIME_MS = 1000ms;
-constexpr int SOCKET_BACKLOG = 5;
+constexpr int SOCKET_BACKLOG = 1024;
 
 /**
  * SIGTERM handler.
