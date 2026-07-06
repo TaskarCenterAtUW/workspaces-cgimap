@@ -1,0 +1,44 @@
+name: Push Docker Image to AZ container registry
+on:
+    pull_request:
+        types: [closed]
+        branches: [develop, staging, production, main]
+jobs:
+    setup-github-environment:
+        if: github.event.pull_request.merged == true
+        runs-on: ubuntu-latest
+        outputs:
+            DEPLOY_ENV: ${{ steps.get_target_environment.outputs.DEPLOY_ENV }}
+        steps:
+            - name: Set Github Environment
+              id: get_target_environment
+              run: |
+                case "${{ github.base_ref }}" in
+                    develop) echo "DEPLOY_ENV=dev" >> $GITHUB_OUTPUT ;;
+                    staging)     echo "DEPLOY_ENV=stage" >> $GITHUB_OUTPUT ;;
+                    production)  echo "DEPLOY_ENV=prod" >> $GITHUB_OUTPUT ;;
+                    *)           echo "DEPLOY_ENV=" >> $GITHUB_OUTPUT ;;
+                esac
+
+    trigger-docker-image-push:
+        if: github.event.pull_request.merged == true
+        needs: setup-github-environment
+        environment: ${{ needs.setup-github-environment.outputs.DEPLOY_ENV }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout source
+              uses: actions/checkout@v3
+              with:
+                ref: ${{ github.base_ref }}
+            - name: Login to Azure Container Registry
+              if: ${{ needs.setup-github-environment.outputs.DEPLOY_ENV != '' }}
+              uses: azure/docker-login@v1
+              with:
+                login-server: ${{ vars.DOCKERHUB_REGISTRY }}
+                username: ${{ vars.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+            - name: Build and Push Docker Image
+              if: ${{ needs.setup-github-environment.outputs.DEPLOY_ENV != '' }}
+              run: |
+                docker build -f docker/debian/Dockerfile_bookworm -t ${{ vars.DOCKERHUB_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ github.sha }} -t ${{ vars.DOCKERHUB_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ needs.setup-github-environment.outputs.DEPLOY_ENV }} .
+                docker push ${{ vars.DOCKERHUB_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }} --all-tags
