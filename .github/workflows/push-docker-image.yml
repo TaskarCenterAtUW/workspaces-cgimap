@@ -7,6 +7,8 @@ jobs:
     setup-github-environment:
         if: github.event.pull_request.merged == true
         runs-on: ubuntu-latest
+        # Only computes the environment name; needs no token access.
+        permissions: {}
         outputs:
             DEPLOY_ENV: ${{ steps.get_target_environment.outputs.DEPLOY_ENV }}
         steps:
@@ -25,6 +27,9 @@ jobs:
         needs: setup-github-environment
         environment: ${{ needs.setup-github-environment.outputs.DEPLOY_ENV }}
         runs-on: ubuntu-latest
+        # Checkout only; the registry login uses the DOCKERHUB_* secrets.
+        permissions:
+            contents: read
         steps:
             - name: Checkout source
               uses: actions/checkout@v3
