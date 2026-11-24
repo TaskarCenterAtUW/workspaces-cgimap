@@ -37,6 +37,8 @@ RUN apt-get update -qq && \
 RUN groupadd -g 61000 cgimap && \
     useradd -g 61000 -l -M -s /bin/false -u 61000 cgimap
 
+COPY docker/memwatch.sh /usr/local/bin/memwatch.sh
+
 USER cgimap
 
 ENV CGIMAP_HOST=db
@@ -50,8 +52,14 @@ ENV CGIMAP_MODERATOR_RATELIMIT=1048576
 ENV CGIMAP_MODERATOR_MAXDEBT=1024
 ENV CGIMAP_PORT=8000
 ENV CGIMAP_INSTANCES=10
+ENV MEMWATCH_PROC=openstreetmap-c
+# Maintain changesets.num_{created,modified,deleted}_* on upload, which the
+# changeset API reports (off by default in cgimap).
+ENV CGIMAP_CHANGESET_ENHANCED_STATS=true
 
 EXPOSE 8000
 
-ENTRYPOINT /usr/bin/openstreetmap-cgimap --pidfile /tmp/cgimap.pid --logfile=/proc/1/fd/1 --daemon && \
-           tail --pid=$(cat /tmp/cgimap.pid) -f /dev/null
+# memwatch.sh logs loudly when the kernel kills a worker for running out of
+# memory, then runs the original command (unchanged) as PID 1.
+ENTRYPOINT ["/bin/sh", "/usr/local/bin/memwatch.sh", "/bin/sh", "-c", \
+            "/usr/bin/openstreetmap-cgimap --pidfile /tmp/cgimap.pid --logfile=/proc/1/fd/1 --daemon && tail --pid=$(cat /tmp/cgimap.pid) -f /dev/null"]
