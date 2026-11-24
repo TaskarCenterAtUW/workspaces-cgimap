@@ -40,5 +40,5 @@ jobs:
             - name: Build and Push Docker Image
               if: ${{ needs.setup-github-environment.outputs.DEPLOY_ENV != '' }}
               run: |
-                docker build -f docker/debian/Dockerfile_bookworm -t ${{ vars.DOCKERHUB_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ github.sha }} -t ${{ vars.DOCKERHUB_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ needs.setup-github-environment.outputs.DEPLOY_ENV }} .
-                docker push ${{ vars.DOCKERHUB_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }} --all-tags
+                docker build -f docker/ubuntu/Dockerfile2404 -t ${{ vars.DOCKERHUB_REGISTRY }}/workspaces-osm-cgimap:${{ github.sha }} -t ${{ vars.DOCKERHUB_REGISTRY }}/workspaces-osm-cgimap:${{ needs.setup-github-environment.outputs.DEPLOY_ENV }} .
+                docker push ${{ vars.DOCKERHUB_REGISTRY }}/workspaces-osm-cgimap --all-tags
