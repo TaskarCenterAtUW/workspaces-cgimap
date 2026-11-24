@@ -65,6 +65,9 @@ ENV CGIMAP_MODERATOR_MAXDEBT=1024
 ENV CGIMAP_PORT=8000
 ENV CGIMAP_INSTANCES=10
 ENV MEMWATCH_PROC=openstreetmap-c
+# Maintain changesets.num_{created,modified,deleted}_* on upload, which the
+# changeset API reports (off by default in cgimap).
+ENV CGIMAP_CHANGESET_ENHANCED_STATS=true
 
 EXPOSE 8000
 
